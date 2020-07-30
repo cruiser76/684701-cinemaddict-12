@@ -1,7 +1,7 @@
 # Личный проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Александр Леонтьев](https://up.htmlacademy.ru/ecmascript/12/user/684701).
-* Наставник: `Неизвестно`.
+* Наставник: Без наставника.
 
 ---
 
