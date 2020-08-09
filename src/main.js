@@ -263,6 +263,20 @@ const createExtraFilmList = (title) => {
   );
 };
 
+const createShowMoreTemplate = () => {
+  return (
+    `<button class="films-list__show-more">Show more</button>`
+  );
+};
+
+const createStatisticsTemplate = () => {
+  return (
+    `<section class="footer__statistics">
+      <p>130 291 movies inside</p>
+    </section>`
+  );
+};
+
 const header = document.querySelector(`.header`);
 render(header, createUserInfoTemplate(), `beforeEnd`);
 
@@ -278,7 +292,7 @@ render(filmWrapper, createExtraFilmList(`Most commented`), `beforeEnd`);
 
 const filmsList = filmWrapper.querySelector(`.films-list`);
 render(filmsList, createFilmsContainer(), `beforeEnd`);
-
+render(filmsList, createShowMoreTemplate(), `beforeEnd`);
 
 const filmContainer = filmsList.querySelector(`.films-list__container`);
 render(filmContainer, createFilmCard(), `beforeEnd`);
@@ -297,3 +311,7 @@ render(extraFilms[0], createFilmsContainer(), `beforeEnd`);
 const topRatingContainer = extraFilms[0].querySelector(`.films-list__container`);
 render(topRatingContainer, createFilmCard(), `beforeEnd`);
 render(topRatingContainer, createFilmCard(), `beforeEnd`);
+
+const footer = document.querySelector(`.footer`);
+render(footer, createStatisticsTemplate(), `beforeEnd`);
+// render(footer, createFilmPopup(), `afterEnd`);
