@@ -314,4 +314,4 @@ render(topRatingContainer, createFilmCard(), `beforeEnd`);
 
 const footer = document.querySelector(`.footer`);
 render(footer, createStatisticsTemplate(), `beforeEnd`);
-// render(footer, createFilmPopup(), `afterEnd`);
+render(footer, createFilmPopup(), `afterEnd`);
