@@ -14,8 +14,6 @@ const FILMS_COUNT_IN_ROW = 5;
 const films = Array(FILMS_COUNT).fill().map(() => getFilm());
 const filters = getFilters(films);
 
-console.log(films);
-
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
