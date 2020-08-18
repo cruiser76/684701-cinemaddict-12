@@ -1,4 +1,5 @@
-const createFilmPopup = () => {
+const createFilmPopup = (film) => {
+  const {poster} = film;
   return (
     `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -8,7 +9,7 @@ const createFilmPopup = () => {
         </div>
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
-            <img class="film-details__poster-img" src="./images/posters/the-great-flamarion.jpg" alt="">
+            <img class="film-details__poster-img" src=${poster} alt="">
 
             <p class="film-details__age">18+</p>
           </div>
