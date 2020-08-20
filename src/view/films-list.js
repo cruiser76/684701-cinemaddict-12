@@ -1,27 +1,27 @@
 import {createElement} from './../utils.js';
 
-const createStatisticsTemplate = (filmsCount) => {
+const createFilmsListTemplate = () => {
   return (
-    `<section class="footer__statistics">
-      <p>${filmsCount} movies inside</p>
+    `<section class="films-list">
+      <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
     </section>`
   );
 };
 
-class Statistics {
-  constructor(filmsCount) {
+class FilmsList {
+  constructor() {
     this._element = null;
-    this._filmsCount = filmsCount;
   }
 
   getTemplate() {
-    return createStatisticsTemplate(this._filmsCount);
+    return createFilmsListTemplate();
   }
 
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
     }
+
     return this._element;
   }
 
@@ -30,4 +30,4 @@ class Statistics {
   }
 }
 
-export default Statistics;
+export default FilmsList;
