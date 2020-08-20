@@ -1,3 +1,5 @@
+import {createElement} from './../utils.js';
+
 const createUserInfoTemplate = () => {
   return (
     `<section class="header__profile profile">
@@ -7,4 +9,25 @@ const createUserInfoTemplate = () => {
   );
 };
 
-export {createUserInfoTemplate};
+class UserInfo {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createUserInfoTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+export default UserInfo;

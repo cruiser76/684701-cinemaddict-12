@@ -1,3 +1,5 @@
+import {createElement} from './../utils.js';
+
 const createStatisticsTemplate = () => {
   return (
     `<section class="footer__statistics">
@@ -6,4 +8,25 @@ const createStatisticsTemplate = () => {
   );
 };
 
-export {createStatisticsTemplate};
+class Statistics {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createStatisticsTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+export default Statistics;
