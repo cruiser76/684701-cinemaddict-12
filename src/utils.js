@@ -1,3 +1,5 @@
+import {RenderPosition} from './const.js';
+
 export const getRandomInt = (a = 1, b = 0) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -14,14 +16,6 @@ export const createElement = (template) => {
 export const renderTemplate = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
-
-export const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`,
-  AFTER: `after`,
-  BEFORE: `before`
-};
-
 
 export const render = (container, component, position) => {
   switch (position) {
