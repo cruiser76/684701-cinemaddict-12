@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractComponent from './abstract.js';
 
 const createFilmCardTemplate = (film) => {
   const {title, poster, description} = film;
@@ -23,25 +23,14 @@ const createFilmCardTemplate = (film) => {
   );
 };
 
-class MovieCard {
+class MovieCard extends AbstractComponent {
   constructor(film = {}) {
-    this._element = null;
+    super();
     this._film = film;
   }
 
-  getTemplate(film) {
-    return createFilmCardTemplate(film);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate(this._film));
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  getTemplate() {
+    return createFilmCardTemplate(this._film);
   }
 }
 
