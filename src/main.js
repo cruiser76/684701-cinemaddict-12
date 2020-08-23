@@ -11,7 +11,7 @@ import ShowMore from './view/show-more.js';
 import Statistics from './view/statistics.js';
 import {getFilm} from './mock/film.js';
 import {getFilters} from './mock/filters.js';
-import {render} from './utils.js';
+import {render} from './utils/render.js';
 import {RenderPosition, ExtraFilmsListName} from './const.js';
 import NoFilms from './view/no-films.js';
 
@@ -44,7 +44,7 @@ const renderMovieCard = (cardContainer, movie) => {
 
   const onMovieCardClick = (evt) => {
     evt.preventDefault();
-    render(main, moviePopupView.getElement(), RenderPosition.BEFOREEND);
+    render(main, moviePopupView, RenderPosition.BEFOREEND);
     document.addEventListener(`keydown`, onEscKeyDown);
   };
 
@@ -60,29 +60,29 @@ const renderMovieCard = (cardContainer, movie) => {
 
   moviePopupView.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, onCloseBtnClick);
 
-  render(cardContainer, movieCardView.getElement(), RenderPosition.BEFOREEND);
+  render(cardContainer, movieCardView, RenderPosition.BEFOREEND);
 };
 
-render(header, new UserInfo().getElement(), RenderPosition.BEFOREEND);
-render(main, new SiteMenu(filters).getElement(), RenderPosition.BEFOREEND);
-render(main, new Sort().getElement(), RenderPosition.BEFOREEND);
+render(header, new UserInfo(), RenderPosition.BEFOREEND);
+render(main, new SiteMenu(filters), RenderPosition.BEFOREEND);
+render(main, new Sort(), RenderPosition.BEFOREEND);
 
-render(footer, new Statistics(films.length).getElement(), RenderPosition.BEFOREEND);
+render(footer, new Statistics(films.length), RenderPosition.BEFOREEND);
 
 const renderFilmsBoard = (mainView, boardFilms) => {
   const filmsBoard = new FilmsBoard();
-  render(mainView, filmsBoard.getElement(), RenderPosition.BEFOREEND);
+  render(mainView, filmsBoard, RenderPosition.BEFOREEND);
 
   const filmsList = new FilmsList();
-  render(filmsBoard.getElement(), filmsList.getElement(), RenderPosition.BEFOREEND);
+  render(filmsBoard, filmsList, RenderPosition.BEFOREEND);
 
   if (!boardFilms || boardFilms.length === 0) {
-    render(filmsList.getElement(), new NoFilms().getElement(), RenderPosition.BEFOREEND);
+    render(filmsList, new NoFilms(), RenderPosition.BEFOREEND);
     return;
   }
 
   const filmsContainer = new FilmsContainer();
-  render(filmsList.getElement(), filmsContainer.getElement(), RenderPosition.BEFOREEND);
+  render(filmsList, filmsContainer, RenderPosition.BEFOREEND);
   for (let i = 0; i < Math.min(boardFilms.length, FILMS_COUNT_IN_ROW); i++) {
     renderMovieCard(filmsContainer.getElement(), boardFilms[i]);
   }
@@ -90,7 +90,7 @@ const renderFilmsBoard = (mainView, boardFilms) => {
   if (boardFilms.length > FILMS_COUNT_IN_ROW) {
     let currentFilmsInRow = FILMS_COUNT_IN_ROW;
     const showMoreBtn = new ShowMore();
-    render(filmsList.getElement(), showMoreBtn.getElement(), RenderPosition.BEFOREEND);
+    render(filmsList, showMoreBtn, RenderPosition.BEFOREEND);
 
 
     showMoreBtn.getElement().addEventListener(`click`, (evt) => {
@@ -109,16 +109,16 @@ const renderFilmsBoard = (mainView, boardFilms) => {
   }
 
   const topRatingFilms = new ExtraFilmsList(ExtraFilmsListName.RATING);
-  render(filmsBoard.getElement(), topRatingFilms.getElement(), RenderPosition.BEFOREEND);
+  render(filmsBoard, topRatingFilms, RenderPosition.BEFOREEND);
   const topRatingContainer = new FilmsContainer();
-  render(topRatingFilms.getElement(), topRatingContainer.getElement(), RenderPosition.BEFOREEND);
+  render(topRatingFilms, topRatingContainer, RenderPosition.BEFOREEND);
   renderMovieCard(topRatingContainer.getElement(), boardFilms[0], RenderPosition.BEFOREEND);
   renderMovieCard(topRatingContainer.getElement(), boardFilms[0], RenderPosition.BEFOREEND);
 
   const mostCommentedFilms = new ExtraFilmsList(ExtraFilmsListName.COMMENT);
-  render(filmsBoard.getElement(), mostCommentedFilms.getElement(), RenderPosition.BEFOREEND);
+  render(filmsBoard, mostCommentedFilms, RenderPosition.BEFOREEND);
   const mostCommentContainer = new FilmsContainer();
-  render(mostCommentedFilms.getElement(), mostCommentContainer.getElement(), RenderPosition.BEFOREEND);
+  render(mostCommentedFilms, mostCommentContainer, RenderPosition.BEFOREEND);
   renderMovieCard(mostCommentContainer.getElement(), boardFilms[0], RenderPosition.BEFOREEND);
   renderMovieCard(mostCommentContainer.getElement(), boardFilms[0], RenderPosition.BEFOREEND);
 };
