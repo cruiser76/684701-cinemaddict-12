@@ -25,7 +25,6 @@ const header = document.querySelector(`.header`);
 const main = document.querySelector(`.main`);
 const footer = document.querySelector(`.footer`);
 
-
 const renderMovieCard = (cardContainer, movie) => {
   const movieCardView = new MovieCard(movie);
   const moviePopupView = new MoviePopup(movie);
@@ -42,23 +41,19 @@ const renderMovieCard = (cardContainer, movie) => {
     }
   };
 
-  const onMovieCardClick = (evt) => {
-    evt.preventDefault();
+  const onMovieCardClick = () => {
     render(main, moviePopupView, RenderPosition.BEFOREEND);
     document.addEventListener(`keydown`, onEscKeyDown);
   };
 
-  const onCloseBtnClick = (evt) => {
-    evt.preventDefault();
+  const onCloseBtnClick = () => {
     removePopup();
     document.removeEventListener(`keydown`, onEscKeyDown);
   };
 
-  movieCardView.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onMovieCardClick);
-  movieCardView.getElement().querySelector(`.film-card__title`).addEventListener(`click`, onMovieCardClick);
-  movieCardView.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, onMovieCardClick);
+  movieCardView.setClickHandler(onMovieCardClick);
 
-  moviePopupView.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, onCloseBtnClick);
+  moviePopupView.setCloseBtnClick(onCloseBtnClick);
 
   render(cardContainer, movieCardView, RenderPosition.BEFOREEND);
 };
@@ -93,8 +88,7 @@ const renderFilmsBoard = (mainView, boardFilms) => {
     render(filmsList, showMoreBtn, RenderPosition.BEFOREEND);
 
 
-    showMoreBtn.getElement().addEventListener(`click`, (evt) => {
-      evt.preventDefault();
+    showMoreBtn.setShowMoreBtnClick(() => {
       films
         .slice(currentFilmsInRow, currentFilmsInRow + FILMS_COUNT_IN_ROW)
         .forEach((film) => renderMovieCard(filmsContainer.getElement(), film, RenderPosition.BEFOREEND));

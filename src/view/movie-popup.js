@@ -179,6 +179,8 @@ class MoviePopup extends AbstractComponent {
   constructor(film = {}) {
     super();
     this._film = film;
+
+    this._handleCloseBtnClick = this._handleCloseBtnClick.bind(this);
   }
 
   getTemplate() {
@@ -187,6 +189,16 @@ class MoviePopup extends AbstractComponent {
 
   removeElement() {
     this._element = null;
+  }
+
+  _handleCloseBtnClick(evt) {
+    evt.preventDefault();
+    this._callback.closeBtnClick();
+  }
+
+  setCloseBtnClick(cb) {
+    this._callback.closeBtnClick = cb;
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._handleCloseBtnClick);
   }
 }
 

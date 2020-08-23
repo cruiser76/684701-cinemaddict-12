@@ -7,8 +7,23 @@ const createShowMoreTemplate = () => {
 };
 
 class ShowMore extends AbstractComponent {
+  constructor() {
+    super();
+    this._handleBtnClick = this._handleBtnClick.bind(this);
+  }
+
   getTemplate() {
     return createShowMoreTemplate();
+  }
+
+  _handleBtnClick(evt) {
+    evt.preventDefault();
+    this._callback.btnClick();
+  }
+
+  setShowMoreBtnClick(cb) {
+    this._callback.btnClick = cb;
+    this.getElement().addEventListener(`click`, this._handleBtnClick);
   }
 }
 

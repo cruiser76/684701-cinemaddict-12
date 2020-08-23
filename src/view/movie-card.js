@@ -27,10 +27,24 @@ class MovieCard extends AbstractComponent {
   constructor(film = {}) {
     super();
     this._film = film;
+
+    this._handleClick = this._handleClick.bind(this);
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._film);
+  }
+
+  _handleClick(evt) {
+    evt.preventDefault();
+    this._callback.clickHandler();
+  }
+
+  setClickHandler(cb) {
+    this._callback.clickHandler = cb;
+    this.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, this._handleClick);
+    this.getElement().querySelector(`.film-card__title`).addEventListener(`click`, this._handleClick);
+    this.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, this._handleClick);
   }
 }
 
