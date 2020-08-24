@@ -1,10 +1,5 @@
-import {RenderPosition} from './const.js';
-
-export const getRandomInt = (a = 1, b = 0) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
+import {RenderPosition} from './../const.js';
+import AbstractComponent from './../view/abstract.js';
 
 export const createElement = (template) => {
   const elementWrapper = document.createElement(`div`);
@@ -14,10 +9,22 @@ export const createElement = (template) => {
 };
 
 export const renderTemplate = (container, template, place) => {
+  if (container instanceof AbstractComponent) {
+    container = container.getElement();
+  }
+
   container.insertAdjacentHTML(place, template);
 };
 
 export const render = (container, component, position) => {
+  if (container instanceof AbstractComponent) {
+    container = container.getElement();
+  }
+
+  if (component instanceof AbstractComponent) {
+    component = component.getElement();
+  }
+
   switch (position) {
     case RenderPosition.AFTERBEGIN:
       container.prepend(component);
@@ -28,7 +35,6 @@ export const render = (container, component, position) => {
     case RenderPosition.AFTER:
       container.after(component);
       break;
-
     case RenderPosition.BEFORE:
       container.before(component);
       break;

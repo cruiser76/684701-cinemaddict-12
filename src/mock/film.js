@@ -1,4 +1,4 @@
-import {getRandomInt} from './../utils.js';
+import {getRandomInt} from './../utils/common.js';
 
 const getRandomTitle = () => {
   const titles = [`Jojo Rabbit`, `Jumanji: The Next Level`, `Avengers: Infinity War`, `Top Gun`, `Birdman or (The Unexpected Virtue of Ignorance)`, `Becky`, `Blitz`, `Harry Potter and the Half-Blood Prince`];

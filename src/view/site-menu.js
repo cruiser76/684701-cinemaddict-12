@@ -1,4 +1,4 @@
-import {createElement} from './../utils.js';
+import AbstractComponent from './abstract.js';
 
 const createFiterItem = (filter, count) => {
   const filterTitle = `${filter[0].toUpperCase()}${filter.slice(1)}${filter === `all` ? ` movies` : ``}`;
@@ -23,25 +23,14 @@ const createMenuTemplate = (filters) => {
   );
 };
 
-class SiteMenu {
+class SiteMenu extends AbstractComponent {
   constructor(filters = {}) {
-    this._element = null;
+    super();
     this._filters = filters;
   }
 
   getTemplate() {
     return createMenuTemplate(this._filters);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

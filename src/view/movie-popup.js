@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractComponent from './abstract.js';
 
 const createFilmPopupTemplate = (film) => {
   const {poster} = film;
@@ -175,25 +175,30 @@ const createFilmPopupTemplate = (film) => {
   );
 };
 
-class MoviePopup {
+class MoviePopup extends AbstractComponent {
   constructor(film = {}) {
-    this._element = null;
+    super();
     this._film = film;
+
+    this._handleCloseBtnClick = this._handleCloseBtnClick.bind(this);
   }
 
-  getTemplate(film) {
-    return createFilmPopupTemplate(film);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate(this._film));
-    }
-    return this._element;
+  getTemplate() {
+    return createFilmPopupTemplate(this._film);
   }
 
   removeElement() {
     this._element = null;
+  }
+
+  _handleCloseBtnClick(evt) {
+    evt.preventDefault();
+    this._callback.closeBtnClick();
+  }
+
+  setCloseBtnClick(cb) {
+    this._callback.closeBtnClick = cb;
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._handleCloseBtnClick);
   }
 }
 
