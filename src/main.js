@@ -1,6 +1,5 @@
 import UserInfo from './view/user-info.js';
 import SiteMenu from './view/site-menu.js';
-import Sort from './view/sort.js';
 import Statistics from './view/statistics.js';
 
 import MovieList from './presenter/movie-list.js';
@@ -20,7 +19,6 @@ const footer = document.querySelector(`.footer`);
 
 render(header, new UserInfo(), RenderPosition.BEFOREEND);
 render(main, new SiteMenu(filters), RenderPosition.BEFOREEND);
-render(main, new Sort(), RenderPosition.BEFOREEND);
 
 render(footer, new Statistics(films.length), RenderPosition.BEFOREEND);
 

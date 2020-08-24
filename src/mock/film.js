@@ -39,6 +39,8 @@ const getFilm = () => {
     isWatched: Boolean(getRandomInt(0, 1)),
     isFavorite: Boolean(getRandomInt(0, 1)),
     isInWatchlist: Boolean(getRandomInt(0, 1)),
+    releaseDate: getRandomInt(1920, 2020),
+    rating: getRandomInt(1, 10)
   };
 };
 
