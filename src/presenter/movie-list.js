@@ -4,13 +4,12 @@ import FilmsBoard from './../view/films-board.js';
 import FilmsList from './../view/films-list.js';
 import NoFilms from './../view/no-films.js';
 import FilmsContainer from './../view/films-container.js';
-import MovieCard from './../view/movie-card.js';
-import MoviePopup from './../view/movie-popup.js';
 import ShowMore from './../view/show-more.js';
 import ExtraFilmsList from './../view/extra-films-list.js';
 import Sort from './../view/sort.js';
 import {SortType} from './../const.js';
 import {sortFilmsDate, sortFilmsRating} from './../utils/films.js';
+import Movie from './movie.js';
 
 const FILMS_COUNT_IN_ROW = 5;
 
@@ -124,36 +123,8 @@ class MovieList {
   }
 
   _renderMovieCard(cardContainer, movie) {
-    this._movieCardView = new MovieCard(movie);
-    this._moviePopupView = new MoviePopup(movie);
-
-    const removePopup = () => {
-      this._moviePopupView.getElement().remove();
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        evt.preventDefault();
-        removePopup();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    const onMovieCardClick = () => {
-      render(this._mainView, this._moviePopupView, RenderPosition.BEFOREEND);
-      document.addEventListener(`keydown`, onEscKeyDown);
-    };
-
-    const onCloseBtnClick = () => {
-      removePopup();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    };
-
-    this._movieCardView.setClickHandler(onMovieCardClick);
-
-    this._moviePopupView.setCloseBtnClick(onCloseBtnClick);
-
-    render(cardContainer, this._movieCardView, RenderPosition.BEFOREEND);
+    this._moviePresenter = new Movie(cardContainer, this._mainView);
+    this._moviePresenter.init(movie);
   }
 }
 
