@@ -4,13 +4,13 @@ import FilmsBoard from './../view/films-board.js';
 import FilmsList from './../view/films-list.js';
 import NoFilms from './../view/no-films.js';
 import FilmsContainer from './../view/films-container.js';
-import MovieCard from './../view/movie-card.js';
-import MoviePopup from './../view/movie-popup.js';
 import ShowMore from './../view/show-more.js';
 import ExtraFilmsList from './../view/extra-films-list.js';
 import Sort from './../view/sort.js';
 import {SortType} from './../const.js';
 import {sortFilmsDate, sortFilmsRating} from './../utils/films.js';
+import {updateItem} from './../utils/common.js';
+import Movie from './movie.js';
 
 const FILMS_COUNT_IN_ROW = 5;
 
@@ -20,6 +20,10 @@ class MovieList {
     this._currentSortType = SortType.DEFAULT;
     this._renderedFilmsCount = FILMS_COUNT_IN_ROW;
 
+    this._movieListPresenter = {};
+    this._movieRatingPresenter = {};
+    this._movieCommentPresenter = {};
+
     this._filmsBoard = new FilmsBoard();
     this._filmsList = new FilmsList();
     this._noFilms = new NoFilms();
@@ -28,6 +32,8 @@ class MovieList {
     this._sort = new Sort(this._currentSortType);
 
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._handleMovieChange = this._handleMovieChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
   }
 
   init(films) {
@@ -43,6 +49,24 @@ class MovieList {
 
     this._renderExtraFilms(ExtraFilmsListName.RATING);
     this._renderExtraFilms(ExtraFilmsListName.COMMENT);
+  }
+
+  _handleModeChange() {
+    Object
+      .values(this._movieListPresenter)
+      .forEach((presenter) => presenter.resetView());
+  }
+
+  _handleMovieChange(updatedMovie) {
+    this._films = updateItem(this._films, updatedMovie);
+    this._sourcedBoardFilms = updateItem(this._sourcedBoardFilms, updatedMovie);
+    this._movieListPresenter[updatedMovie.id].init(updatedMovie);
+    if (this._movieRatingPresenter[updatedMovie.id]) {
+      this._movieRatingPresenter[updatedMovie.id].init(updatedMovie);
+    }
+    if (this._movieCommentPresenter[updatedMovie.id]) {
+      this._movieCommentPresenter[updatedMovie.id].init(updatedMovie);
+    }
   }
 
   _sortFilms(sortType) {
@@ -89,7 +113,7 @@ class MovieList {
 
     render(this._filmsList, this._filmsContainer, RenderPosition.BEFOREEND);
     for (let i = 0; i < Math.min(this._films.length, FILMS_COUNT_IN_ROW); i++) {
-      this._renderMovieCard(this._filmsContainer, this._films[i]);
+      this._renderMovieCard(this._filmsContainer, this._films[i], this._movieListPresenter);
     }
 
     if (this._films.length > FILMS_COUNT_IN_ROW) {
@@ -99,7 +123,7 @@ class MovieList {
       this._showMoreBtn.setShowMoreBtnClick(() => {
         this._films
           .slice(this._renderedFilmsCount, this._renderedFilmsCount + FILMS_COUNT_IN_ROW)
-          .forEach((film) => this._renderMovieCard(this._filmsContainer, film));
+          .forEach((film) => this._renderMovieCard(this._filmsContainer, film, this._movieListPresenter));
 
         this._renderedFilmsCount += FILMS_COUNT_IN_ROW;
 
@@ -113,47 +137,23 @@ class MovieList {
   }
 
   _renderExtraFilms(title) {
+    const presenter = title === ExtraFilmsListName.RATING
+      ? this._movieRatingPresenter
+      : this._movieCommentPresenter;
     this._extraFilms = new ExtraFilmsList(title);
     render(this._filmsBoard, this._extraFilms, RenderPosition.BEFOREEND);
 
     this._extraFilmsContainer = new FilmsContainer();
     render(this._extraFilms, this._extraFilmsContainer, RenderPosition.BEFOREEND);
 
-    this._renderMovieCard(this._extraFilmsContainer, this._films[0]);
-    this._renderMovieCard(this._extraFilmsContainer, this._films[0]);
+    this._renderMovieCard(this._extraFilmsContainer, this._films[0], presenter);
+    this._renderMovieCard(this._extraFilmsContainer, this._films[0], presenter);
   }
 
-  _renderMovieCard(cardContainer, movie) {
-    this._movieCardView = new MovieCard(movie);
-    this._moviePopupView = new MoviePopup(movie);
-
-    const removePopup = () => {
-      this._moviePopupView.getElement().remove();
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        evt.preventDefault();
-        removePopup();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    const onMovieCardClick = () => {
-      render(this._mainView, this._moviePopupView, RenderPosition.BEFOREEND);
-      document.addEventListener(`keydown`, onEscKeyDown);
-    };
-
-    const onCloseBtnClick = () => {
-      removePopup();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    };
-
-    this._movieCardView.setClickHandler(onMovieCardClick);
-
-    this._moviePopupView.setCloseBtnClick(onCloseBtnClick);
-
-    render(cardContainer, this._movieCardView, RenderPosition.BEFOREEND);
+  _renderMovieCard(cardContainer, movie, presenterStore) {
+    const moviePresenter = new Movie(cardContainer, this._mainView, this._handleMovieChange, this._handleModeChange);
+    moviePresenter.init(movie);
+    presenterStore[movie.id] = moviePresenter;
   }
 }
 

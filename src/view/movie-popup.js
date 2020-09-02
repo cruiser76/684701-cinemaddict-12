@@ -1,7 +1,29 @@
 import AbstractComponent from './abstract.js';
 
-const createFilmPopupTemplate = (film) => {
-  const {poster} = film;
+const Emojis = {
+  'emoji-smile': `smile`,
+  'emoji-sleeping': `sleeping`,
+  'emoji-puke': `puke`,
+  'emoji-angry': `angry`,
+};
+
+const getUserEmojiTemplate = (emoji) => {
+  if (!emoji) {
+    return ``;
+  }
+
+  return (
+    `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji-${emoji}"></img>`
+  );
+};
+
+
+const createFilmPopupTemplate = (data, userComment) => {
+  const {poster, isFavorite, isWatched, isInWatchlist} = data;
+  const {emoji} = userComment;
+
+  const userEmojiTemplate = getUserEmojiTemplate(emoji);
+
   return (
     `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -69,13 +91,13 @@ const createFilmPopupTemplate = (film) => {
         </div>
 
         <section class="film-details__controls">
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+          <input type="checkbox" class="film-details__control-input visually-hidden" ${isInWatchlist ? `checked` : ``} id="watchlist" name="watchlist">
           <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
+          <input type="checkbox" class="film-details__control-input visually-hidden" ${isWatched ? `checked` : ``} id="watched" name="watched">
           <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
+          <input type="checkbox" class="film-details__control-input visually-hidden" ${isFavorite ? `checked` : ``} id="favorite" name="favorite">
           <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
         </section>
       </div>
@@ -140,7 +162,7 @@ const createFilmPopupTemplate = (film) => {
           </ul>
 
           <div class="film-details__new-comment">
-            <div for="add-emoji" class="film-details__add-emoji-label"></div>
+            <div for="add-emoji" class="film-details__add-emoji-label">${userEmojiTemplate}</div>
 
             <label class="film-details__comment-label">
               <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
@@ -179,16 +201,104 @@ class MoviePopup extends AbstractComponent {
   constructor(film = {}) {
     super();
     this._film = film;
+    this._data = Object.assign({}, film);
+    this._userComment = {};
 
     this._handleCloseBtnClick = this._handleCloseBtnClick.bind(this);
+    this._handleSubmit = this._handleSubmit.bind(this);
+    this._handleClickFavorite = this._handleClickFavorite.bind(this);
+    this._handleClickWatched = this._handleClickWatched.bind(this);
+    this._handleClickWish = this._handleClickWish.bind(this);
+
+    this._handleEmojiClick = this._handleEmojiClick.bind(this);
+
+    this._setInnerHandlers();
+  }
+
+  reset() {
+    this._data = Object.assign({}, this._film);
+    this._userComment = {};
+    this.updateElement();
   }
 
   getTemplate() {
-    return createFilmPopupTemplate(this._film);
+    return createFilmPopupTemplate(this._data, this._userComment);
   }
 
   removeElement() {
     this._element = null;
+  }
+
+  updateData(update, justDataUpdating) {
+    if (!update) {
+      return;
+    }
+
+    this._film = Object.assign(
+        {},
+        this._film,
+        update
+    );
+
+    if (justDataUpdating) {
+      return;
+    }
+
+    this.updateElement();
+  }
+
+  updateElement() {
+    let prevElement = this.getElement();
+    const parent = prevElement.parentElement;
+    this.removeElement();
+
+    const newElement = this.getElement();
+
+    parent.replaceChild(newElement, prevElement);
+    prevElement = null; // Чтобы окончательно "убить" ссылку на prevElement
+
+    this.restoreHandlers();
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setSubmit(this._callback.onSubmit);
+    this.setCloseBtnClick(this._callback.closeBtnClick);
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector(`#favorite`)
+      .addEventListener(`click`, this._handleClickFavorite);
+    this.getElement()
+      .querySelector(`#watched`)
+      .addEventListener(`click`, this._handleClickWatched);
+    this.getElement()
+      .querySelector(`#watchlist`)
+      .addEventListener(`click`, this._handleClickWish);
+    this.getElement()
+      .querySelector(`.film-details__emoji-list`)
+      .addEventListener(`click`, this._handleEmojiClick);
+  }
+
+  _handleClickFavorite() {
+    this._data.isFavorite = !this._data.isFavorite;
+  }
+
+  _handleClickWatched() {
+    this._data.isWatched = !this._data.isWatched;
+  }
+
+  _handleClickWish() {
+    this._data.isInWatchlist = !this._data.isInWatchlist;
+  }
+
+  _handleEmojiClick(evt) {
+    if (evt.target.tagName !== `INPUT`) {
+      return;
+    }
+    this._userComment.emoji = Emojis[evt.target.id];
+    this.updateElement();
   }
 
   _handleCloseBtnClick(evt) {
@@ -196,9 +306,27 @@ class MoviePopup extends AbstractComponent {
     this._callback.closeBtnClick();
   }
 
+  _handleSubmit(evt) {
+    if (evt.key === `Enter` && evt.ctrlKey) {
+      evt.preventDefault();
+      this._callback.onSubmit(this._data);
+      this._userComment = {};
+    }
+  }
+
+  _resetSubmit(evt) {
+    evt.preventDefault();
+  }
+
   setCloseBtnClick(cb) {
     this._callback.closeBtnClick = cb;
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._handleCloseBtnClick);
+  }
+
+  setSubmit(cb) {
+    this._callback.onSubmit = cb;
+    this.getElement().addEventListener(`keydown`, this._handleSubmit);
+    this.getElement().addEventListener(`submit`, this._resetSubmit);
   }
 }
 
