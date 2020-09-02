@@ -28,10 +28,13 @@ const getComments = () => {
   };
 };
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 const getFilm = () => {
   const comments = Array(getRandomInt(0, 5)).fill().map(() => getComments());
 
   return {
+    id: generateId(),
     title: getRandomTitle(),
     poster: `./images/posters/${getRandomImg()}`,
     description: getRandomPhrase(),
